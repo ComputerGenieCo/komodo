@@ -26,15 +26,19 @@ jobs:
             ${{ runner.os }}-apt-${{ hashFiles('apt-requirements.txt') }}
             ${{ runner.os }}-apt-
 
-      - name: Debug Cache Key
-        run: |
-          echo "Cache key: ${{ runner.os }}-apt-${{ hashFiles('apt-requirements.txt') }}"
-          echo "Restore keys: ${{ runner.os }}-apt-"
+      - name: Restore depends cache
+        uses: actions/cache@v4
+        with:
+          path: depends/x86_64-unknown-linux-gnu
+          key: ${{ runner.os }}-x86_64-unknown-linux-gnu-${{ hashFiles('depends/packages/**') }}
+          restore-keys: |
+            ${{ runner.os }}-x86_64-unknown-linux-gnu-${{ hashFiles('depends/packages/**') }}
+            ${{ runner.os }}-x86_64-unknown-linux-gnu-
 
       - name: Build (Linux)
         if: runner.os == 'Linux'
         run: |
-          ./zcutil/build.sh -j$(nproc)
+          ./zcutil/runner_build.sh -j$(nproc)
           zip --junk-paths komodo-linux src/komodod src/komodo-cli
 
       - name: Upload komodo-linux.zip as artifact
