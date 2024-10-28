@@ -1,6 +1,9 @@
-name: Komodo CD test releases
+name: Komodo CD releases
 
 on:
+  push:
+    branches:
+    - master
   workflow_dispatch:
 
 permissions:
