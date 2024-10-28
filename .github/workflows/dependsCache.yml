@@ -8,25 +8,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Cache
         id: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: depends/x86_64-unknown-linux-gnu
           key: ${{ runner.os }}-x86_64-unknown-linux-gnu-${{ hashFiles('depends/**') }}
-          restore-keys: |
-            ${{ runner.os }}-x86_64-unknown-linux-gnu-
 
       - name: Run Make
-        if: steps.cache.outputs.cache-hit != 'true'
         run: |
           cd depends
-          make
-
-      - name: Cache the output directory
-        uses: actions/cache@v3
-        with:
-          path: depends/x86_64-unknown-linux-gnu
-          key: ${{ runner.os }}-x86_64-unknown-linux-gnu-${{ hashFiles('depends/**') }}
+          make -j$(nproc)
